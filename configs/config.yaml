@@ -1,0 +1,129 @@
+# Jarvis Brain Main Configuration File
+
+jarvis:
+  name: "Jarvis HQ"
+  version: "0.1.0"
+  mode: "production"
+  debug: false
+
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "data/logs/jarvis.log"
+  max_size: "100MB"
+  backup_count: 5
+
+voice:
+  enabled: true
+  language: "en-US"
+  audio_device: "default"
+  sample_rate: 16000
+  chunk_size: 1024
+  silence_threshold: 500
+  listening_timeout: 30
+
+nlp:
+  enabled: true
+  model: "en_core_web_sm"
+  confidence_threshold: 0.7
+  max_history: 100
+
+agents:
+  mac:
+    enabled: true
+    hostname: "macmini.local"
+    port: 5000
+    timeout: 30
+    capabilities:
+      - "build"
+      - "vscode"
+      - "render"
+      - "execute"
+  
+  windows:
+    enabled: false
+    hostname: "windows-pc"
+    port: 5001
+    timeout: 30
+    capabilities:
+      - "deploy"
+      - "services"
+      - "execute"
+  
+  android:
+    enabled: false
+    device_id: ""
+    capabilities:
+      - "messaging"
+      - "sms"
+      - "hotspot"
+      - "notifications"
+  
+  cloud:
+    enabled: false
+    region: "us-east-1"
+    timeout: 60
+    capabilities:
+      - "research"
+      - "planning"
+      - "24h_uptime"
+      - "scaling"
+
+modules:
+  whatsapp:
+    enabled: false
+    mode: "web"
+    api_key: ""
+    otp_enabled: true
+  
+  phone_assistant:
+    enabled: false
+    sms_enabled: true
+    hotspot_enabled: true
+    notifications_enabled: true
+  
+  dashboard:
+    enabled: true
+    port: 8080
+    host: "0.0.0.0"
+    auth_enabled: true
+    theme: "dark"
+  
+  research:
+    enabled: true
+    max_concurrent_tasks: 5
+    timeout: 3600
+  
+  planning:
+    enabled: true
+    auto_optimize: true
+
+security:
+  authentication_required: true
+  token_expiry: 3600
+  max_login_attempts: 5
+  audit_logging: true
+  rollback_enabled: true
+  snapshot_retention: 30
+
+backup:
+  enabled: true
+  frequency: "daily"
+  time: "02:00"
+  retention_days: 30
+  locations:
+    - "local:data/backups"
+    - "cloud:s3://jarvis-backups"
+
+monitoring:
+  enabled: false
+  prometheus_enabled: false
+  prometheus_port: 9090
+  health_check_interval: 60
+
+performance:
+  max_tasks: 100
+  task_timeout: 3600
+  worker_threads: 4
+  cache_enabled: true
+  cache_ttl: 300
