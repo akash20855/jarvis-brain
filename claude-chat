@@ -1,0 +1,588 @@
+#!/usr/bin/env python3
+"""
+Claude Haiku 4.5 - Natural Language Interface with Self-Improvement
+Understand plain English requests and convert them to API calls
+Autonomously analyzes and improves code without admin approval
+"""
+
+import requests
+import json
+import sys
+from typing import Dict, Tuple, Optional
+from pathlib import Path
+
+# Try to import autonomous improvement engine
+try:
+    from core.autonomous_self_improvement import AutonomousImprover, SelfEvolvingClaude
+    HAS_IMPROVEMENT = True
+except:
+    HAS_IMPROVEMENT = False
+
+# Try to import auto-debug engine
+try:
+    from core.auto_debug import AutoDebugger
+    HAS_AUTODEBUG = True
+except:
+    HAS_AUTODEBUG = False
+
+API_BASE = "http://localhost:8001/api/claude"
+
+class NaturalLanguageInterpreter:
+    """Parse English requests and convert to Claude API calls"""
+    
+    def __init__(self):
+        self.api_base = API_BASE
+        self.last_code = None
+        self.conversation_history = []
+        
+    def parse_intent(self, text: str) -> Tuple[str, Dict]:
+        """
+        Parse natural language text and extract intent + parameters
+        
+        Returns: (action, params)
+        """
+        text_lower = text.lower()
+        
+        # AUTO-DEBUG intent
+        if any(word in text_lower for word in ["debug", "find bugs", "fix bugs", "check bugs", "scan bugs", "watch"]):
+            if any(word in text_lower for word in ["watch", "monitor", "continuous", "keep checking"]):
+                interval = self._extract_number(text) or 5
+                return "auto-debug-watch", {"interval": interval}
+            elif any(word in text_lower for word in ["report", "history", "summary"]):
+                return "auto-debug-report", {}
+            else:
+                max_files = self._extract_number(text) or 10
+                return "auto-debug-scan", {"max_files": max_files}
+        
+        # SELF-IMPROVE intent
+        if any(word in text_lower for word in ["improve", "auto improve", "self improve", "upgrade", "self upgrade", "evolve"]):
+            if any(word in text_lower for word in ["project", "all", "codebase", "everything"]):
+                max_files = self._extract_number(text) or 10
+                return "self-improve-project", {"max_files": max_files}
+            elif any(word in text_lower for word in ["upgrade", "component"]):
+                component = self._extract_component(text)
+                return "self-upgrade", {"component": component}
+            else:
+                # Default to project improvement
+                return "self-improve-project", {"max_files": 10}
+        
+        # GENERATE intent
+        if any(word in text_lower for word in ["generate", "create", "write", "make", "build", "code"]):
+            # Example: "generate a fibonacci function in python"
+            language = self._extract_language(text)
+            request = text
+            
+            # Clean up the request
+            for word in ["generate", "create", "write", "make", "build", "code", "in python", "in javascript", "function", "a ", "please"]:
+                request = request.replace(word, "").strip()
+            
+            return "generate", {"request": request or text, "language": language}
+        
+        # ANALYZE intent
+        elif any(word in text_lower for word in ["analyze", "check", "review", "audit", "scan", "look at"]):
+            # Example: "analyze this code: def foo(): pass"
+            code = self._extract_code(text)
+            return "analyze", {"code": code or text}
+        
+        # TEST intent
+        elif any(word in text_lower for word in ["test", "write tests", "generate tests", "create tests"]):
+            # Example: "write tests for function def add(a,b): return a+b"
+            code = self._extract_code(text)
+            language = self._extract_language(text)
+            return "test", {"code": code or text, "language": language}
+        
+        # REFACTOR intent
+        elif any(word in text_lower for word in ["refactor", "optimize", "clean", "rewrite", "simplify"]):
+            # Example: "refactor this code to be more pythonic"
+            code = self._extract_code(text)
+            language = self._extract_language(text)
+            style = self._extract_style(text)
+            return "refactor", {"code": code or text, "language": language, "style": style}
+        
+        # EXPLAIN intent
+        elif any(word in text_lower for word in ["explain", "what does", "understand", "meaning of", "describe"]):
+            # Example: "explain what this does: result = [x*2 for x in nums]"
+            code = self._extract_code(text)
+            return "explain", {"code": code or text}
+        
+        # STATUS intent
+        elif any(word in text_lower for word in ["status", "running", "available", "online", "up"]):
+            return "status", {}
+        
+        # Default: assume "generate"
+        else:
+            language = self._extract_language(text)
+            return "generate", {"request": text, "language": language}
+    
+    def _extract_number(self, text: str) -> Optional[int]:
+        """Extract number from text"""
+        words = text.split()
+        for word in words:
+            if word.isdigit():
+                return int(word)
+        return None
+    
+    def _extract_component(self, text: str) -> str:
+        """Extract component name from text"""
+        # Common components
+        components = ["claude", "voice", "android", "mac", "windows", "cloud", "security", "sync"]
+        text_lower = text.lower()
+        for component in components:
+            if component in text_lower:
+                return component
+        return "main"
+    
+    def _extract_language(self, text: str) -> str:
+        """Extract programming language from text"""
+        languages = {
+            "python": "python",
+            "py": "python",
+            "javascript": "javascript",
+            "js": "javascript",
+            "java": "java",
+            "rust": "rust",
+            "go": "go",
+            "golang": "go",
+            "ruby": "ruby",
+            "php": "php",
+            "csharp": "csharp",
+            "c#": "csharp",
+            "cpp": "cpp",
+            "c++": "cpp",
+            "typescript": "typescript",
+            "ts": "typescript",
+            "bash": "bash",
+            "shell": "bash",
+            "sql": "sql",
+            "html": "html",
+            "css": "css",
+        }
+        
+        text_lower = text.lower()
+        for keyword, lang in languages.items():
+            if keyword in text_lower:
+                return lang
+        
+        return "python"  # Default
+    
+    def _extract_code(self, text: str) -> Optional[str]:
+        """Extract code from text (between backticks or after common markers)"""
+        # Look for code in backticks
+        if "```" in text:
+            parts = text.split("```")
+            if len(parts) >= 2:
+                return parts[1].strip()
+        
+        # Look for code after markers
+        markers = ["code:", "function:", "def ", "class ", "function ", "const ", "let ", "var ", "for ", "while "]
+        for marker in markers:
+            if marker in text.lower():
+                idx = text.lower().find(marker)
+                code_part = text[idx:]
+                # Take from marker to end or until natural break
+                lines = code_part.split("\n")
+                return "\n".join(lines[:5])  # Get first few lines
+        
+        return None
+    
+    def _extract_style(self, text: str) -> str:
+        """Extract refactoring style from text"""
+        styles = {
+            "pythonic": "pythonic",
+            "clean": "clean",
+            "readable": "readable",
+            "performance": "performance",
+            "optimized": "performance",
+            "faster": "performance",
+        }
+        
+        text_lower = text.lower()
+        for keyword, style in styles.items():
+            if keyword in text_lower:
+                return style
+        
+        return "clean"  # Default
+    
+    def execute(self, text: str) -> Dict:
+        """Execute the natural language request"""
+        # Check if backend is running
+        try:
+            response = requests.get(f"{self.api_base}/status", timeout=2)
+        except:
+            return {
+                "success": False,
+                "error": "Backend not running! Start with: make claude-start"
+            }
+        
+        # Parse intent
+        action, params = self.parse_intent(text)
+        
+        # Make API call
+        try:
+            if action == "generate":
+                return self._call_generate(params)
+            elif action == "analyze":
+                return self._call_analyze(params)
+            elif action == "test":
+                return self._call_test(params)
+            elif action == "refactor":
+                return self._call_refactor(params)
+            elif action == "explain":
+                return self._call_explain(params)
+            elif action == "status":
+                return self._call_status()
+            elif action == "self-improve-project":
+                return self._self_improve_project(params)
+            elif action == "self-upgrade":
+                return self._self_upgrade(params)
+            elif action == "auto-debug-scan":
+                return self._auto_debug_scan(params)
+            elif action == "auto-debug-watch":
+                return self._auto_debug_watch(params)
+            elif action == "auto-debug-report":
+                return self._auto_debug_report()
+            else:
+                return {"success": False, "error": f"Unknown action: {action}"}
+        except Exception as e:
+            return {
+                "success": False,
+                "error": f"API Error: {str(e)}"
+            }
+    
+    def _call_generate(self, params: Dict) -> Dict:
+        """Call generate endpoint"""
+        response = requests.post(
+            f"{self.api_base}/generate",
+            json=params,
+            timeout=30
+        )
+        result = response.json()
+        if result.get("success"):
+            self.last_code = result.get("code")
+        return result
+    
+    def _call_analyze(self, params: Dict) -> Dict:
+        """Call analyze endpoint"""
+        response = requests.post(
+            f"{self.api_base}/analyze",
+            json=params,
+            timeout=30
+        )
+        return response.json()
+    
+    def _call_test(self, params: Dict) -> Dict:
+        """Call test endpoint"""
+        response = requests.post(
+            f"{self.api_base}/test",
+            json=params,
+            timeout=30
+        )
+        return response.json()
+    
+    def _call_refactor(self, params: Dict) -> Dict:
+        """Call refactor endpoint"""
+        response = requests.post(
+            f"{self.api_base}/refactor",
+            json=params,
+            timeout=30
+        )
+        return response.json()
+    
+    def _call_explain(self, params: Dict) -> Dict:
+        """Call explain endpoint"""
+        response = requests.post(
+            f"{self.api_base}/explain",
+            json=params,
+            timeout=30
+        )
+        return response.json()
+    
+    def _call_status(self) -> Dict:
+        """Call status endpoint"""
+        response = requests.get(f"{self.api_base}/status", timeout=2)
+        return response.json()
+    
+    def _self_improve_project(self, params: Dict) -> Dict:
+        """Autonomously improve the entire project"""
+        if not HAS_IMPROVEMENT:
+            return {
+                "success": False,
+                "error": "Self-improvement module not available. Run: pip install -e ."
+            }
+        
+        max_files = params.get("max_files", 10)
+        improver = AutonomousImprover()
+        
+        if not improver.is_claude_running():
+            return {
+                "success": False,
+                "error": "Claude backend not running. Start with: make claude-start"
+            }
+        
+        improvements = improver.auto_improve_project(max_files)
+        
+        return {
+            "success": True,
+            "improvements": improvements,
+            "total": len(improvements),
+            "log_file": str(improver.improvement_log)
+        }
+    
+    def _self_upgrade(self, params: Dict) -> Dict:
+        """Autonomously upgrade a specific component"""
+        if not HAS_IMPROVEMENT:
+            return {
+                "success": False,
+                "error": "Self-improvement module not available. Run: pip install -e ."
+            }
+        
+        component = params.get("component", "main")
+        improver = AutonomousImprover()
+        
+        if not improver.is_claude_running():
+            return {
+                "success": False,
+                "error": "Claude backend not running. Start with: make claude-start"
+            }
+        
+        result = improver.upgrade_component(component)
+        
+        return {
+            "success": result.get("success"),
+            "component": component,
+            "improvements": result.get("improvements", [])
+        }
+    
+    def _auto_debug_scan(self, params: Dict) -> Dict:
+        """Autonomously scan and fix bugs"""
+        if not HAS_AUTODEBUG:
+            return {
+                "success": False,
+                "error": "Auto-debug module not available. Run: pip install -e ."
+            }
+        
+        max_files = params.get("max_files", 10)
+        debugger = AutoDebugger()
+        
+        if not debugger.is_claude_running():
+            return {
+                "success": False,
+                "error": "Claude backend not running. Start with: make claude-start"
+            }
+        
+        results = debugger.auto_debug_project(max_files)
+        
+        fixed = sum(1 for r in results if r.get("status") == "fixed")
+        clean = sum(1 for r in results if r.get("status") == "clean")
+        
+        return {
+            "success": True,
+            "debug_results": results,
+            "fixed": fixed,
+            "clean": clean,
+            "total": len(results),
+            "log_file": str(debugger.debug_log)
+        }
+    
+    def _auto_debug_watch(self, params: Dict) -> Dict:
+        """Start continuous debug monitoring"""
+        if not HAS_AUTODEBUG:
+            return {
+                "success": False,
+                "error": "Auto-debug module not available. Run: pip install -e ."
+            }
+        
+        interval = params.get("interval", 5)
+        debugger = AutoDebugger()
+        
+        if not debugger.is_claude_running():
+            return {
+                "success": False,
+                "error": "Claude backend not running. Start with: make claude-start"
+            }
+        
+        # Run watch in background would require threading
+        # For now, return info about how to start it
+        return {
+            "success": True,
+            "message": f"👀 AutoDebug Watch Mode - Scanning every {interval}s",
+            "command": f"python core/auto_debug.py watch {interval}",
+            "info": "Run the command above to start continuous monitoring"
+        }
+    
+    def _auto_debug_report(self) -> Dict:
+        """Get debug report"""
+        if not HAS_AUTODEBUG:
+            return {
+                "success": False,
+                "error": "Auto-debug module not available"
+            }
+        
+        debugger = AutoDebugger()
+        
+        return {
+            "success": True,
+            "total_fixes": len(debugger.debug_history),
+            "recent_fixes": debugger.debug_history[-10:],
+            "log_file": str(debugger.debug_log)
+        }
+
+
+def print_result(result: Dict, action: str = ""):
+    """Pretty print results"""
+    if not result.get("success"):
+        print(f"❌ Error: {result.get('error', 'Unknown error')}")
+        return
+    
+    print("✅ Success!\n")
+    
+    # Handle auto-debug results
+    if "debug_results" in result:
+        print("🐛 AutoDebug Report:")
+        print("━" * 60)
+        print(f"Fixed: {result['fixed']} files")
+        print(f"Clean: {result['clean']} files")
+        print(f"Total: {result['total']} files scanned")
+        print(f"Log: {result['log_file']}")
+        print("━" * 60)
+        for debug in result.get("debug_results", [])[:5]:
+            print(f"\n📝 {debug['filepath']}")
+            print(f"   Status: {debug['status']}")
+            if debug.get("issues_found"):
+                print(f"   Issues: {debug['issues_found']}")
+    
+    # Handle watch mode
+    elif "watch" in result.get("message", "").lower():
+        print(f"👀 {result['message']}")
+        print(f"Command: {result['command']}")
+        print(f"Info: {result['info']}")
+    
+    # Handle debug report
+    elif "total_fixes" in result:
+        print("📈 AutoDebug Report:")
+        print("━" * 60)
+        print(f"Total Fixes: {result['total_fixes']}")
+        print(f"Log File: {result['log_file']}")
+        if result.get("recent_fixes"):
+            print("\nRecent Fixes:")
+            for fix in result["recent_fixes"][-5:]:
+                print(f"  - {fix['filepath']}: {fix['status']}")
+        print("━" * 60)
+    
+    # Handle different response types
+    elif "code" in result:
+        print("📝 Generated Code:")
+        print("━" * 60)
+        print(result["code"])
+        print("━" * 60)
+        if result.get("filename"):
+            print(f"📁 Filename: {result['filename']}")
+    
+    elif "analysis" in result:
+        print("🔍 Analysis:")
+        print("━" * 60)
+        print(result["analysis"])
+        print("━" * 60)
+    
+    elif "tests" in result:
+        print("🧪 Generated Tests:")
+        print("━" * 60)
+        print(result["tests"])
+        print("━" * 60)
+    
+    elif "refactored_code" in result:
+        print("♻️ Refactored Code:")
+        print("━" * 60)
+        print(result["refactored_code"])
+        print("━" * 60)
+    
+    elif "explanation" in result:
+        print("📚 Explanation:")
+        print("━" * 60)
+        print(result["explanation"])
+        print("━" * 60)
+    
+    elif "status" in result:
+        print(f"Status: {result['status']}")
+        if "model" in result:
+            print(f"Model: {result['model']['model']}")
+    
+    else:
+        print(json.dumps(result, indent=2))
+
+
+def interactive_mode():
+    """Run in interactive chat mode"""
+    interpreter = NaturalLanguageInterpreter()
+    
+    print("🧠 Claude Haiku Natural Language Interface")
+    print("━" * 60)
+    print("Talk to Claude in plain English!")
+    print("")
+    print("🔧 Code Generation:")
+    print("  'generate a fibonacci function in python'")
+    print("  'create a REST API endpoint in javascript'")
+    print("")
+    print("🔍 Code Analysis & Improvement:")
+    print("  'analyze this code: def foo(): pass'")
+    print("  'improve the project'")
+    print("  'refactor this to be more pythonic'")
+    print("")
+    print("🧪 Testing:")
+    print("  'write tests for def add(a,b): return a+b'")
+    print("  'create test cases'")
+    print("")
+    print("🐛 Auto Debugging (NO ADMIN NEEDED):")
+    print("  'debug the project'")
+    print("  'find and fix bugs'")
+    print("  'scan for issues and fix them'")
+    print("  'watch for bugs continuously'")
+    print("  'show debug report'")
+    print("")
+    print("✨ Self Evolution (NO ADMIN NEEDED):")
+    print("  'improve all code'")
+    print("  'upgrade the claude component'")
+    print("")
+    print("Type 'quit' or 'exit' to stop")
+    print("━" * 60)
+    print("")
+    
+    while True:
+        try:
+            user_input = input("You: ").strip()
+            
+            if not user_input:
+                continue
+            
+            if user_input.lower() in ["quit", "exit", "bye", "goodbye"]:
+                print("👋 Bye!")
+                break
+            
+            print("\n🧠 Thinking...\n")
+            result = interpreter.execute(user_input)
+            print_result(result, user_input)
+            print("")
+        
+        except KeyboardInterrupt:
+            print("\n👋 Bye!")
+            break
+        except Exception as e:
+            print(f"❌ Error: {e}")
+            print("")
+
+
+def main():
+    """Main entry point"""
+    if len(sys.argv) > 1:
+        # Command line mode
+        text = " ".join(sys.argv[1:])
+        interpreter = NaturalLanguageInterpreter()
+        result = interpreter.execute(text)
+        print_result(result, text)
+    else:
+        # Interactive mode
+        interactive_mode()
+
+
+if __name__ == "__main__":
+    main()

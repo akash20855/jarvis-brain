@@ -1,0 +1,13 @@
+#!/bin/bash
+# Quick launcher for Jarvis Brain macOS app
+
+APP_PATH="/Volumes/Akash SSD/repos/jarvis-brain/build/dist/Jarvis Brain.app"
+
+if [ ! -d "$APP_PATH" ]; then
+    echo "❌ Error: Jarvis Brain.app not found at $APP_PATH"
+    exit 1
+fi
+
+echo "🚀 Launching Jarvis Brain..."
+open "$APP_PATH"
+echo "✅ App launched! Opening at http://localhost:3000 automatically..."

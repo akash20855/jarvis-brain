@@ -1,0 +1,200 @@
+{
+  "name": "jarvis-pro",
+  "displayName": "JARVIS Pro - AI Code Assistant",
+  "description": "Intelligent code generation, debugging, and improvement directly in VS Code",
+  "version": "2.0.0",
+  "publisher": "jarvis",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "AI",
+    "Code Generation",
+    "Debuggers",
+    "Linters",
+    "Testing"
+  ],
+  "keywords": [
+    "ai",
+    "code-generation",
+    "debugging",
+    "refactoring",
+    "testing",
+    "claude",
+    "automation"
+  ],
+  "icon": "resources/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/jarvis-brain.git"
+  },
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "jarvis.generateCode",
+        "title": "JARVIS: Generate Code",
+        "category": "JARVIS"
+      },
+      {
+        "command": "jarvis.analyzeCode",
+        "title": "JARVIS: Analyze Code",
+        "category": "JARVIS"
+      },
+      {
+        "command": "jarvis.debugProject",
+        "title": "JARVIS: Debug Project",
+        "category": "JARVIS"
+      },
+      {
+        "command": "jarvis.improveCode",
+        "title": "JARVIS: Improve Code",
+        "category": "JARVIS"
+      },
+      {
+        "command": "jarvis.generateTests",
+        "title": "JARVIS: Generate Tests",
+        "category": "JARVIS"
+      },
+      {
+        "command": "jarvis.refactorCode",
+        "title": "JARVIS: Refactor Code",
+        "category": "JARVIS"
+      },
+      {
+        "command": "jarvis.explainCode",
+        "title": "JARVIS: Explain Code",
+        "category": "JARVIS"
+      },
+      {
+        "command": "jarvis.buildProject",
+        "title": "JARVIS: Build with Debug",
+        "category": "JARVIS"
+      },
+      {
+        "command": "jarvis.status",
+        "title": "JARVIS: Show Status",
+        "category": "JARVIS"
+      },
+      {
+        "command": "jarvis.startServer",
+        "title": "JARVIS: Start Integration Server",
+        "category": "JARVIS"
+      },
+      {
+        "command": "jarvis.stopServer",
+        "title": "JARVIS: Stop Integration Server",
+        "category": "JARVIS"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "jarvis.analyzeCode",
+          "group": "1_modification",
+          "when": "editorTextFocus"
+        },
+        {
+          "command": "jarvis.refactorCode",
+          "group": "1_modification",
+          "when": "editorTextFocus"
+        },
+        {
+          "command": "jarvis.explainCode",
+          "group": "1_modification",
+          "when": "editorTextFocus"
+        },
+        {
+          "command": "jarvis.generateTests",
+          "group": "1_modification",
+          "when": "editorTextFocus"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "jarvis.generateCode"
+        },
+        {
+          "command": "jarvis.analyzeCode"
+        },
+        {
+          "command": "jarvis.debugProject"
+        },
+        {
+          "command": "jarvis.improveCode"
+        },
+        {
+          "command": "jarvis.generateTests"
+        },
+        {
+          "command": "jarvis.refactorCode"
+        },
+        {
+          "command": "jarvis.explainCode"
+        },
+        {
+          "command": "jarvis.buildProject"
+        },
+        {
+          "command": "jarvis.status"
+        }
+      ]
+    },
+    "statusBar": [
+      {
+        "id": "jarvis.status",
+        "alignment": "left",
+        "priority": 100
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "JARVIS Pro Configuration",
+      "properties": {
+        "jarvis.serverHost": {
+          "type": "string",
+          "default": "localhost",
+          "description": "JARVIS server host"
+        },
+        "jarvis.serverPort": {
+          "type": "number",
+          "default": 8765,
+          "description": "JARVIS server port"
+        },
+        "jarvis.autoStart": {
+          "type": "boolean",
+          "default": true,
+          "description": "Auto-start JARVIS server on VS Code startup"
+        },
+        "jarvis.defaultLanguage": {
+          "type": "string",
+          "default": "python",
+          "enum": [
+            "python",
+            "javascript",
+            "typescript",
+            "java",
+            "cpp",
+            "csharp",
+            "go",
+            "rust"
+          ],
+          "description": "Default programming language"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "node -e \"console.log('Ready to publish')\""
+  },
+  "dependencies": {
+    "ws": "^8.14.0"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.75.0"
+  }
+}

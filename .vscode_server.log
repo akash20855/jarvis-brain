@@ -1,0 +1,14 @@
+2026-02-26 22:26:21,287 - VSCodeIntegration - WARNING - AutoDebugEngine not available: cannot import name 'AutoDebugEngine' from 'core.auto_debug' (/Volumes/Akash SSD/repos/jarvis-brain/core/auto_debug.py)
+2026-02-26 22:26:21,287 - VSCodeIntegration - WARNING - AutonomousSelfImprovementEngine not available: cannot import name 'AutonomousSelfImprovementEngine' from 'core.autonomous_self_improvement' (/Volumes/Akash SSD/repos/jarvis-brain/core/autonomous_self_improvement.py)
+2026-02-26 22:26:21,289 - VSCodeIntegration - INFO - Registered command: jarvis.generateCode
+2026-02-26 22:26:21,289 - VSCodeIntegration - INFO - Registered command: jarvis.analyzeCode
+2026-02-26 22:26:21,289 - VSCodeIntegration - INFO - Registered command: jarvis.debugProject
+2026-02-26 22:26:21,289 - VSCodeIntegration - INFO - Registered command: jarvis.improveCode
+2026-02-26 22:26:21,289 - VSCodeIntegration - INFO - Registered command: jarvis.generateTests
+2026-02-26 22:26:21,289 - VSCodeIntegration - INFO - Registered command: jarvis.refactorCode
+2026-02-26 22:26:21,289 - VSCodeIntegration - INFO - Registered command: jarvis.explainCode
+2026-02-26 22:26:21,289 - VSCodeIntegration - INFO - Registered command: jarvis.buildProject
+2026-02-26 22:26:21,289 - VSCodeIntegration - INFO - Registered command: jarvis.status
+2026-02-26 22:26:21,289 - VSCodeIntegration - WARNING - Failed to initialize Claude: ANTHROPIC_API_KEY not set. Set it with: export ANTHROPIC_API_KEY='sk-ant-...'
+2026-02-26 22:26:21,289 - VSCodeIntegration - INFO - VS Code Integration Server initialized on ws://localhost:8765
+2026-02-26 22:26:21,289 - VSCodeIntegration - INFO - Starting VS Code Integration Server on ws://localhost:8765

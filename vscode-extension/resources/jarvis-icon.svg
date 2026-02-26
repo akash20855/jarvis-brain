@@ -1,0 +1,30 @@
+<svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="64" cy="64" r="60" fill="#667eea" opacity="0.1"/>
+  
+  <!-- Robot head -->
+  <circle cx="64" cy="45" r="20" fill="#667eea" stroke="#667eea" stroke-width="2"/>
+  
+  <!-- Eyes -->
+  <circle cx="58" cy="40" r="3" fill="#ffffff"/>
+  <circle cx="70" cy="40" r="3" fill="#ffffff"/>
+  
+  <!-- Antenna -->
+  <line x1="64" y1="25" x2="64" y2="10" stroke="#667eea" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="64" cy="8" r="3" fill="#667eea"/>
+  
+  <!-- Body -->
+  <rect x="50" y="65" width="28" height="35" rx="4" fill="#667eea" stroke="#667eea" stroke-width="2"/>
+  
+  <!-- Arms -->
+  <line x1="50" y1="75" x2="30" y2="75" stroke="#667eea" stroke-width="3" stroke-linecap="round"/>
+  <line x1="98" y1="75" x2="98" y2="75" stroke="#667eea" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="28" cy="75" r="3" fill="#667eea"/>
+  <circle cx="100" cy="75" r="3" fill="#667eea"/>
+  
+  <!-- Heart/Core -->
+  <circle cx="64" cy="82" r="4" fill="#ff6b6b"/>
+  
+  <!-- Mouth -->
+  <path d="M 60 88 Q 64 90 68 88" stroke="#667eea" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+</svg>

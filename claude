@@ -1,0 +1,221 @@
+#!/bin/bash
+# Claude Haiku CLI Wrapper
+# Easy command-line interface for Claude Haiku 4.5
+
+API_BASE="http://localhost:8001/api/claude"
+
+# Colors
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+# Check if backend is running
+check_backend() {
+    if ! curl -s "$API_BASE/status" > /dev/null 2>&1; then
+        echo -e "${RED}❌ Backend not running!${NC}"
+        echo "Start with: bash start-claude.sh"
+        exit 1
+    fi
+}
+
+# Generate code
+generate() {
+    local request="$1"
+    local language="${2:-python}"
+    
+    if [ -z "$request" ]; then
+        echo "Usage: claude generate 'your request' [language]"
+        echo "Example: claude generate 'fibonacci function' python"
+        exit 1
+    fi
+    
+    check_backend
+    
+    echo -e "${BLUE}🧠 Generating $language code...${NC}"
+    response=$(curl -s -X POST "$API_BASE/generate" \
+        -H "Content-Type: application/json" \
+        -d "{\"request\": \"$request\", \"language\": \"$language\"}")
+    
+    # Extract and display
+    code=$(echo "$response" | python3 -c "import sys, json; data=json.load(sys.stdin); print(data.get('code', 'Error: ' + str(data)))" 2>/dev/null || echo "$response")
+    
+    echo ""
+    echo -e "${GREEN}Generated Code:${NC}"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "$code"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+}
+
+# Analyze code
+analyze() {
+    local code="$1"
+    local filename="${2:-script.py}"
+    
+    if [ -z "$code" ]; then
+        echo "Usage: claude analyze 'code' [filename]"
+        echo "Example: claude analyze 'def bad(): eval(input())' script.py"
+        exit 1
+    fi
+    
+    check_backend
+    
+    echo -e "${BLUE}🔍 Analyzing code...${NC}"
+    response=$(curl -s -X POST "$API_BASE/analyze" \
+        -H "Content-Type: application/json" \
+        -d "{\"code\": \"$code\", \"filename\": \"$filename\"}")
+    
+    analysis=$(echo "$response" | python3 -c "import sys, json; data=json.load(sys.stdin); print(data.get('analysis', 'Error: ' + str(data)))" 2>/dev/null || echo "$response")
+    
+    echo ""
+    echo -e "${GREEN}Analysis:${NC}"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "$analysis"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+}
+
+# Generate tests
+test_code() {
+    local code="$1"
+    local language="${2:-python}"
+    
+    if [ -z "$code" ]; then
+        echo "Usage: claude test 'code' [language]"
+        exit 1
+    fi
+    
+    check_backend
+    
+    echo -e "${BLUE}🧪 Generating tests...${NC}"
+    response=$(curl -s -X POST "$API_BASE/test" \
+        -H "Content-Type: application/json" \
+        -d "{\"code\": \"$code\", \"language\": \"$language\"}")
+    
+    tests=$(echo "$response" | python3 -c "import sys, json; data=json.load(sys.stdin); print(data.get('tests', 'Error: ' + str(data)))" 2>/dev/null || echo "$response")
+    
+    echo ""
+    echo -e "${GREEN}Generated Tests:${NC}"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "$tests"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+}
+
+# Refactor code
+refactor() {
+    local code="$1"
+    local language="${2:-python}"
+    local style="${3:-clean}"
+    
+    if [ -z "$code" ]; then
+        echo "Usage: claude refactor 'code' [language] [style]"
+        echo "Styles: clean, performance, readable, pythonic"
+        exit 1
+    fi
+    
+    check_backend
+    
+    echo -e "${BLUE}♻️  Refactoring code ($style style)...${NC}"
+    response=$(curl -s -X POST "$API_BASE/refactor" \
+        -H "Content-Type: application/json" \
+        -d "{\"code\": \"$code\", \"language\": \"$language\", \"style\": \"$style\"}")
+    
+    refactored=$(echo "$response" | python3 -c "import sys, json; data=json.load(sys.stdin); print(data.get('refactored_code', 'Error: ' + str(data)))" 2>/dev/null || echo "$response")
+    
+    echo ""
+    echo -e "${GREEN}Refactored Code:${NC}"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "$refactored"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+}
+
+# Explain code
+explain() {
+    local code="$1"
+    
+    if [ -z "$code" ]; then
+        echo "Usage: claude explain 'code'"
+        exit 1
+    fi
+    
+    check_backend
+    
+    echo -e "${BLUE}📚 Explaining code...${NC}"
+    response=$(curl -s -X POST "$API_BASE/explain" \
+        -H "Content-Type: application/json" \
+        -d "{\"code\": \"$code\"}")
+    
+    explanation=$(echo "$response" | python3 -c "import sys, json; data=json.load(sys.stdin); print(data.get('explanation', 'Error: ' + str(data)))" 2>/dev/null || echo "$response")
+    
+    echo ""
+    echo -e "${GREEN}Explanation:${NC}"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "$explanation"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+}
+
+# Status
+status() {
+    check_backend
+    
+    echo -e "${BLUE}🔍 Claude Status${NC}"
+    curl -s "$API_BASE/status" | python3 -m json.tool 2>/dev/null || echo "Error getting status"
+}
+
+# Help
+show_help() {
+    echo "Claude Haiku 4.5 CLI"
+    echo ""
+    echo "Usage: claude <command> [arguments]"
+    echo ""
+    echo "Commands:"
+    echo "  generate <request> [language]   Generate code from description"
+    echo "  analyze <code> [filename]       Analyze code for issues"
+    echo "  test <code> [language]          Generate unit tests"
+    echo "  refactor <code> [lang] [style]  Refactor code"
+    echo "  explain <code>                  Explain what code does"
+    echo "  status                          Show Claude status"
+    echo ""
+    echo "Examples:"
+    echo "  claude generate 'fibonacci function' python"
+    echo "  claude analyze 'def bad(): eval(input())'"
+    echo "  claude test 'def add(a,b): return a+b' python"
+    echo "  claude refactor 'x=[i for i in range(10)]' python pythonic"
+    echo "  claude explain 'result = [x*2 for x in nums]'"
+    echo ""
+}
+
+# Main
+case "${1:-help}" in
+    generate)
+        generate "$2" "$3"
+        ;;
+    analyze)
+        analyze "$2" "$3"
+        ;;
+    test)
+        test_code "$2" "$3"
+        ;;
+    refactor)
+        refactor "$2" "$3" "$4"
+        ;;
+    explain)
+        explain "$2"
+        ;;
+    status)
+        status
+        ;;
+    help|--help|-h)
+        show_help
+        ;;
+    *)
+        echo "Unknown command: $1"
+        show_help
+        exit 1
+        ;;
+esac

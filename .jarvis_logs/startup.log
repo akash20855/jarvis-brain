@@ -1,0 +1,39 @@
+2026-02-26 23:06:54,356 - VSCodeIntegration - WARNING - AutoDebugEngine not available: cannot import name 'AutoDebugEngine' from 'core.auto_debug' (/Volumes/Akash SSD/repos/jarvis-brain/core/auto_debug.py)
+2026-02-26 23:06:54,357 - VSCodeIntegration - WARNING - AutonomousSelfImprovementEngine not available: cannot import name 'AutonomousSelfImprovementEngine' from 'core.autonomous_self_improvement' (/Volumes/Akash SSD/repos/jarvis-brain/core/autonomous_self_improvement.py)
+2026-02-26 23:06:54,358 - VSCodeIntegration - INFO - Registered command: jarvis.generateCode
+2026-02-26 23:06:54,358 - VSCodeIntegration - INFO - Registered command: jarvis.analyzeCode
+2026-02-26 23:06:54,358 - VSCodeIntegration - INFO - Registered command: jarvis.debugProject
+2026-02-26 23:06:54,358 - VSCodeIntegration - INFO - Registered command: jarvis.improveCode
+2026-02-26 23:06:54,358 - VSCodeIntegration - INFO - Registered command: jarvis.generateTests
+2026-02-26 23:06:54,358 - VSCodeIntegration - INFO - Registered command: jarvis.refactorCode
+2026-02-26 23:06:54,358 - VSCodeIntegration - INFO - Registered command: jarvis.explainCode
+2026-02-26 23:06:54,358 - VSCodeIntegration - INFO - Registered command: jarvis.buildProject
+2026-02-26 23:06:54,358 - VSCodeIntegration - INFO - Registered command: jarvis.status
+2026-02-26 23:06:54,430 - core.groq_code_generator - INFO - ✓ Groq initialized with model: llama-3.3-70b-versatile
+2026-02-26 23:06:54,430 - VSCodeIntegration - INFO - ✓ Using Groq AI backend (free & fast)
+2026-02-26 23:06:54,430 - VSCodeIntegration - INFO - VS Code Integration Server initialized on ws://localhost:8765
+2026-02-26 23:06:54,430 - VSCodeIntegration - INFO - Starting VS Code Integration Server on ws://localhost:8765
+2026-02-26 23:07:02,904 - VSCodeIntegration - INFO - New VS Code client connected from ('127.0.0.1', 50401)
+2026-02-26 23:07:02,905 - VSCodeIntegration - INFO - Executing command: jarvis.generateTests
+2026-02-26 23:07:03,731 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2026-02-26 23:07:03,746 - VSCodeIntegration - INFO - VS Code client disconnected from ('127.0.0.1', 50401)
+2026-02-26 23:10:14,972 - VSCodeIntegration - INFO - New VS Code client connected from ('127.0.0.1', 50454)
+2026-02-26 23:10:14,973 - VSCodeIntegration - INFO - VS Code client disconnected from ('127.0.0.1', 50454)
+2026-02-26 23:13:53,729 - VSCodeIntegration - INFO - New VS Code client connected from ('127.0.0.1', 50490)
+2026-02-26 23:13:53,730 - VSCodeIntegration - INFO - VS Code client disconnected from ('127.0.0.1', 50490)
+2026-02-26 23:13:55,513 - VSCodeIntegration - INFO - New VS Code client connected from ('127.0.0.1', 50498)
+2026-02-26 23:13:55,514 - VSCodeIntegration - INFO - Executing command: jarvis.generateTests
+2026-02-26 23:13:56,255 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2026-02-26 23:13:56,292 - websocket_server.websocket_server - WARNING - Client must always be masked.
+2026-02-26 23:13:56,292 - VSCodeIntegration - INFO - VS Code client disconnected from ('127.0.0.1', 50498)
+2026-02-26 23:14:09,968 - VSCodeIntegration - INFO - New VS Code client connected from ('127.0.0.1', 50503)
+2026-02-26 23:14:09,968 - VSCodeIntegration - INFO - VS Code client disconnected from ('127.0.0.1', 50503)
+2026-02-26 23:14:11,255 - VSCodeIntegration - INFO - New VS Code client connected from ('127.0.0.1', 50508)
+2026-02-26 23:14:11,256 - VSCodeIntegration - INFO - Executing command: jarvis.generateTests
+2026-02-26 23:14:11,664 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2026-02-26 23:14:11,667 - VSCodeIntegration - INFO - VS Code client disconnected from ('127.0.0.1', 50508)
+2026-02-26 23:21:52,603 - VSCodeIntegration - INFO - New VS Code client connected from ('127.0.0.1', 50599)
+2026-02-26 23:21:52,603 - VSCodeIntegration - INFO - VS Code client disconnected from ('127.0.0.1', 50599)
+2026-02-26 23:23:17,783 - VSCodeIntegration - INFO - New VS Code client connected from ('127.0.0.1', 50682)
+2026-02-26 23:24:49,931 - VSCodeIntegration - INFO - New VS Code client connected from ('127.0.0.1', 50747)
+2026-02-26 23:24:49,932 - VSCodeIntegration - INFO - VS Code client disconnected from ('127.0.0.1', 50747)

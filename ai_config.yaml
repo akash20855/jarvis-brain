@@ -1,0 +1,97 @@
+# Jarvis Brain - AI Configuration
+# Edit this file to customize your AI services
+
+ai:
+  # Code Analysis AI Service
+  code_analysis:
+    enabled: true
+    type: "ollama"  # ollama, openai, anthropic, local, custom
+    url: "http://host.docker.internal:11434"  # Change to localhost:11434 if not using Docker
+    model: "mistral"
+    timeout: 30
+    description: "Analyzes code and suggests improvements"
+  
+  # Chat AI Service
+  chat:
+    enabled: true
+    type: "ollama"
+    url: "http://host.docker.internal:11435"
+    model: "neural-chat"
+    timeout: 30
+    description: "Conversational assistant for coding help"
+  
+  # Suggestion Generator AI
+  suggestions:
+    enabled: true
+    type: "ollama"
+    url: "http://host.docker.internal:11436"
+    model: "mistral"
+    timeout: 30
+    description: "Generates code improvement suggestions"
+
+# Alternative AI providers (uncomment to use)
+#
+# ======================================
+# 🧠 CLAUDE HAIKU 4.5 (BUILT-IN FOR CODING)
+# ======================================
+# Best for: Code analysis, generation, and improvements
+# Setup: Get API key from https://console.anthropic.com
+# Install: pip install anthropic
+#
+# QUICK START:
+#   1. Set environment variable: export ANTHROPIC_API_KEY="your-key"
+#   2. Uncomment the claude_haiku section below
+#   3. Restart Jarvis
+#
+# claude_haiku:
+#   enabled: true
+#   type: "anthropic"
+#   api_key: "${ANTHROPIC_API_KEY}"
+#   model: "claude-3-5-haiku-20241022"
+#   timeout: 30
+#   description: "Claude Haiku 3.5 for coding tasks"
+#
+# ======================================
+# OTHER AI PROVIDERS
+# ======================================
+#
+# OpenAI Example:
+#   code_analysis:
+#     enabled: true
+#     type: "openai"
+#     api_key: "${OPENAI_API_KEY}"  # Set in environment variable
+#     model: "gpt-4"
+#     timeout: 30
+#
+# Claude Opus (Premium):
+#   code_analysis:
+#     enabled: true
+#     type: "anthropic"
+#     api_key: "${ANTHROPIC_API_KEY}"
+#     model: "claude-3-opus-20240229"
+#     timeout: 30
+#
+# Claude Sonnet (Balanced):
+#   code_analysis:
+#     enabled: true
+#     type: "anthropic"
+#     api_key: "${ANTHROPIC_API_KEY}"
+#     model: "claude-3-sonnet-20240229"
+#     timeout: 30
+#
+# Local Ollama (Running Locally):
+#   code_analysis:
+#     enabled: true
+#     type: "ollama"
+#     url: "http://localhost:11434"  # Change from host.docker.internal
+#     model: "mistral"
+#     timeout: 30
+
+fallback:
+  # Use pattern-based analysis when AI is unavailable
+  enabled: true
+  analysis_rules:
+    - "Suggest list comprehensions for append loops"
+    - "Flag eval/exec for security"
+    - "Warn about functions over 100 lines"
+    - "Suggest type hints"

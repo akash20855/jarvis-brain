@@ -1,0 +1,287 @@
+{
+  "name": "jarvis-ai-assistant",
+  "displayName": "🤖 JARVIS - AI Code Intelligence",
+  "description": "JARVIS: Your intelligent AI coding companion with instant chat, math calculations, debugging, and code analysis - Powered by Groq (Free) + Claude + Ollama",
+  "version": "1.0.0",
+  "publisher": "jarvis-team",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "AI",
+    "Code Quality",
+    "Debuggers",
+    "Formatters",
+    "Linters"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:jarvis.activate",
+    "onCommand:jarvis.chat",
+    "onCommand:jarvis.fix",
+    "onCommand:jarvis.analyze",
+    "onCommand:jarvis.debug",
+    "onLanguage:python",
+    "onLanguage:javascript",
+    "onLanguage:typescript",
+    "onLanguage:java",
+    "onLanguage:cpp",
+    "onLanguage:csharp",
+    "onLanguage:go",
+    "onLanguage:rust"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "jarvis.activate",
+        "title": "🚀 Activate Jarvis AI",
+        "category": "Jarvis"
+      },
+      {
+        "command": "jarvis.chat",
+        "title": "💬 Open Jarvis Chat",
+        "category": "Jarvis"
+      },
+      {
+        "command": "jarvis.fix",
+        "title": "🔧 Auto-Fix Current File",
+        "category": "Jarvis"
+      },
+      {
+        "command": "jarvis.analyze",
+        "title": "📊 Analyze Code",
+        "category": "Jarvis"
+      },
+      {
+        "command": "jarvis.debug",
+        "title": "🐛 Debug Current File",
+        "category": "Jarvis"
+      },
+      {
+        "command": "jarvis.quickFix",
+        "title": "⚡ Quick Fix",
+        "category": "Jarvis"
+      },
+      {
+        "command": "jarvis.explainCode",
+        "title": "❓ Explain Code",
+        "category": "Jarvis"
+      },
+      {
+        "command": "jarvis.optimizeCode",
+        "title": "⚙️ Optimize Code",
+        "category": "Jarvis"
+      },
+      {
+        "command": "jarvis.generateTests",
+        "title": "🧪 Generate Tests",
+        "category": "Jarvis"
+      },
+      {
+        "command": "jarvis.addComments",
+        "title": "📝 Add Comments",
+        "category": "Jarvis"
+      },
+      {
+        "command": "jarvis.refactor",
+        "title": "♻️ Refactor Code",
+        "category": "Jarvis"
+      },
+      {
+        "command": "jarvis.findBugs",
+        "title": "🐛 Find Bugs",
+        "category": "Jarvis"
+      },
+      {
+        "command": "jarvis.showStatus",
+        "title": "📍 Show Jarvis Status",
+        "category": "Jarvis"
+      },
+      {
+        "command": "jarvis.switchAIModel",
+        "title": "🤖 Switch JARVIS AI Backend (Groq/Claude/Ollama)",
+        "category": "Jarvis"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "jarvis.chat",
+        "key": "ctrl+alt+j",
+        "mac": "cmd+alt+j"
+      },
+      {
+        "command": "jarvis.fix",
+        "key": "ctrl+alt+f",
+        "mac": "cmd+alt+f",
+        "when": "editorFocus"
+      },
+      {
+        "command": "jarvis.analyze",
+        "key": "ctrl+alt+a",
+        "mac": "cmd+alt+a",
+        "when": "editorFocus"
+      },
+      {
+        "command": "jarvis.debug",
+        "key": "ctrl+alt+d",
+        "mac": "cmd+alt+d",
+        "when": "editorFocus"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "jarvis-explorer",
+          "title": "Jarvis AI Assistant",
+          "icon": "resources/jarvis-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "jarvis-explorer": [
+        {
+          "id": "jarvis-chat",
+          "name": "💬 Chat",
+          "type": "webview"
+        },
+        {
+          "id": "jarvis-suggestions",
+          "name": "💡 Suggestions",
+          "type": "tree"
+        },
+        {
+          "id": "jarvis-analysis",
+          "name": "📊 Analysis",
+          "type": "tree"
+        },
+        {
+          "id": "jarvis-commands",
+          "name": "🔧 Quick Commands",
+          "type": "tree"
+        }
+      ]
+    },
+    "menus": {
+      "editor/context": [
+        {
+          "command": "jarvis.quickFix",
+          "group": "1_modification",
+          "when": "editorFocus"
+        },
+        {
+          "command": "jarvis.explainCode",
+          "group": "1_modification",
+          "when": "editorFocus"
+        },
+        {
+          "command": "jarvis.optimizeCode",
+          "group": "1_modification",
+          "when": "editorFocus"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "jarvis.chat",
+          "when": "editorFocus"
+        },
+        {
+          "command": "jarvis.fix",
+          "when": "editorFocus"
+        },
+        {
+          "command": "jarvis.analyze",
+          "when": "editorFocus"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Jarvis AI Assistant",
+      "properties": {
+        "jarvis.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable Jarvis AI Assistant"
+        },
+        "jarvis.backendUrl": {
+          "type": "string",
+          "default": "ws://localhost:8765",
+          "description": "Jarvis WebSocket Server URL"
+        },
+        "jarvis.aiBackend": {
+          "type": "string",
+          "enum": ["groq", "claude", "ollama"],
+          "default": "groq",
+          "description": "AI Backend: groq (free, fast) | claude (premium) | ollama (local, free)"
+        },
+        "jarvis.autoFix": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable automatic code fixing on save"
+        },
+        "jarvis.liveAnalysis": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable real-time code analysis"
+        },
+        "jarvis.showSuggestions": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show code suggestions via CodeLens"
+        },
+        "jarvis.debugMode": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable debug output"
+        },
+        "jarvis.analysisLevel": {
+          "type": "string",
+          "enum": ["basic", "standard", "advanced"],
+          "default": "standard",
+          "description": "Code analysis depth level"
+        },
+        "jarvis.aiModel": {
+          "type": "string",
+          "enum": ["free", "premium", "enterprise"],
+          "default": "premium",
+          "description": "AI model level (all free!)"
+        },
+        "jarvis.groqApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Groq API Key (free models) - Get from https://console.groq.com/keys"
+        },
+        "jarvis.anthropicApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Anthropic API Key (Optional - for Claude backend) - Get from https://console.anthropic.com/account/keys"
+        },
+        "jarvis.ollamaUrl": {
+          "type": "string",
+          "default": "http://localhost:11434",
+          "description": "Ollama server URL (local AI)"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.3",
+    "eslint": "^8.54.0",
+    "@typescript-eslint/parser": "^6.13.2",
+    "@typescript-eslint/eslint-plugin": "^6.13.2"
+  },
+  "dependencies": {
+    "axios": "^1.6.2",
+    "ws": "^8.15.0"
+  }
+}

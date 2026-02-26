@@ -1,0 +1,4 @@
+✓ WebSocket server listening on ws://localhost:8765
+✓ Command 'generateCode' registered
+✓ Command 'analyzeCode' registered
+... (9 commands total)
