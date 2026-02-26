@@ -1,0 +1,32 @@
+# Jarvis Brain Minimal Core Requirements
+# For Python 3.14+ compatibility (macOS)
+# Install with: pip install -r requirements-minimal.txt
+
+# Core NLP (stable versions with 3.14 wheels)
+nltk==3.8.1
+textblob==0.17.1
+
+# Networking
+requests==2.31.0
+
+# Utilities
+PyYAML==6.0.1
+python-dotenv==1.0.0
+Click==8.1.7
+tqdm==4.66.1
+colorama==0.4.6
+
+# Testing
+pytest==7.4.3
+
+# Development (linting and formatting)
+black==24.1.1
+isort==5.13.2
+
+# Note: Many packages with C extensions don't have wheels for Python 3.14 yet
+# If you need full functionality, consider using Python 3.11 or 3.12 instead:
+#   brew install python@3.12
+#   cd jarvis-brain && rm -rf jarvis_env
+#   python3.12 -m venv jarvis_env
+#   source jarvis_env/bin/activate
+#   pip install -r requirements.txt

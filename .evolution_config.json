@@ -1,0 +1,45 @@
+{
+  "auto_evolution": {
+    "enabled": true,
+    "free_ai_options": [
+      {
+        "name": "Ollama (Local)",
+        "provider": "ollama",
+        "models": ["mistral", "neural-chat", "dolphin-mixtral"],
+        "cost": "FREE - runs locally",
+        "setup": "ollama.ai",
+        "speed": "Fast",
+        "privacy": "100% local"
+      },
+      {
+        "name": "GitHub Copilot",
+        "provider": "github_copilot",
+        "cost": "FREE tier available",
+        "setup": "GitHub.Copilot VS Code extension",
+        "speed": "Instant",
+        "quality": "High"
+      },
+      {
+        "name": "Hugging Face (Free)",
+        "provider": "hugging_face",
+        "models": ["mistral-7b", "neural-chat"],
+        "cost": "FREE - rate limited",
+        "api": "https://huggingface.co/inference-api",
+        "setup": "Get free API key"
+      },
+      {
+        "name": "Claude API (Free tier)",
+        "provider": "anthropic",
+        "cost": "$5 free credit monthly",
+        "setup": "API key from console.anthropic.com",
+        "quality": "Excellent",
+        "rate_limit": "5 requests/minute"
+      }
+    ],
+    "recommended": "Ollama (completely free, runs locally, no rate limits)",
+    "scan_interval_seconds": 3600,
+    "auto_apply_security_fixes": false,
+    "auto_apply_performance": true,
+    "notify_on_improvements": true
+  }
+}

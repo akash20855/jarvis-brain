@@ -17,7 +17,7 @@ python-telegram-bot==20.3
 twilio==8.10.0
 
 # Database and Data
-pydantic==2.5.0
+pydantic==2.0.3
 PyYAML==6.0.1
 python-dotenv==1.0.0
 
@@ -47,8 +47,8 @@ pylint==3.0.3
 isort==5.13.2
 mypy==1.7.1
 
-# Performance
-uvloop==0.19.0
+# Performance (optional, requires build tools on macOS)
+# uvloop==0.19.0  # Requires C compiler - install XCode command line tools if needed
 gunicorn==21.2.0
 
 # Utilities
