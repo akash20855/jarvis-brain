@@ -1,4 +1,4 @@
-.PHONY: help setup venv install test build run deploy docker-build docker-up docker-down clean lint docs ci all
+.PHONY: help setup venv install test build run deploy docker-build docker-up docker-down clean lint docs ci all android android-test android-status
 
 # Colors for output
 GREEN := \033[0;32m
@@ -26,6 +26,11 @@ help:
 	@echo "  make build          - Build the project"
 	@echo "  make run            - Run Jarvis interactive REPL"
 	@echo "  make demo           - Run workflow demonstration"
+	@echo ""
+	@echo "$(GREEN)Android:$(NC)"
+	@echo "  make android        - Run Android agent tests and show status"
+	@echo "  make android-test   - Run Android agent unit tests"
+	@echo "  make android-status - Show Android agent status"
 	@echo ""
 	@echo "$(GREEN)Docker Deployment:$(NC)"
 	@echo "  make docker-build   - Build Docker containers"
@@ -149,6 +154,38 @@ docker-down:
 docker-logs:
 	@echo "$(BLUE)📋 Docker logs...$(NC)"
 	docker-compose logs -f
+
+# ════════════════════════════════════════════════════════════════════════
+# Android Agent
+# ════════════════════════════════════════════════════════════════════════
+
+android: android-test android-status
+	@echo "$(GREEN)✅ Android agent ready$(NC)"
+
+android-test: venv
+	@echo "$(BLUE)🤖 Running Android agent tests...$(NC)"
+	PYTHONPATH=$(PWD) ./jarvis_env/bin/python -m pytest tests/test_agents.py -k 'TestAndroidAgent or TestEnhancedAndroidAgent' -v
+	@echo "$(GREEN)✅ Android agent tests passed$(NC)"
+
+android-status: venv
+	@echo "$(BLUE)📱 Android Agent Status$(NC)"
+	@echo "$(BLUE)═══════════════════════════════════════════════════════════$(NC)"
+	PYTHONPATH=$(PWD) ./jarvis_env/bin/python -c "\
+from agents.android_agent import AndroidAgent; \
+from agents.enhanced_android_agent import EnhancedAndroidAgent; \
+agent = EnhancedAndroidAgent('demo_device', 'Demo Phone'); \
+agent.start(); \
+info = agent.get_device_info(); \
+print('  Device    :', info['device_name']); \
+print('  Device ID :', info['device_id']); \
+print('  OS        :', info['os']); \
+print('  Active    :', info['is_active']); \
+print('  Battery   :', str(info['battery_level']) + '%'); \
+print('  Hotspot   :', info['hotspot_enabled']); \
+print('  Commands  :', info['commands_executed']); \
+"
+	@echo "$(BLUE)═══════════════════════════════════════════════════════════$(NC)"
+	@echo "$(GREEN)✅ Android agent status displayed$(NC)"
 
 # ════════════════════════════════════════════════════════════════════════
 # Cloud Deployment
