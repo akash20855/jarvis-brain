@@ -80,6 +80,13 @@ make demo              # Run workflow demonstration
 make integration-test  # Run integration tests
 ```
 
+### Android
+```bash
+make android           # Run Android agent tests and show status
+make android-test      # Run Android agent unit tests
+make android-status    # Show Android agent status
+```
+
 ### Docker Operations
 ```bash
 make docker-build      # Build Docker image

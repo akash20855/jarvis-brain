@@ -52,6 +52,7 @@ env/
 .venv
 env.bak/
 venv.bak/
+jarvis_env/
 
 # IDE
 .vscode/
