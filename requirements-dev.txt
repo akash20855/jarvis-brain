@@ -5,7 +5,7 @@
 # Core dependencies (no compilation required)
 SpeechRecognition==3.10.0
 pyttsx3==2.90
-nltk==3.8.1
+nltk==3.9.2
 textblob==0.17.1
 
 # Networking and APIs (compatible versions)

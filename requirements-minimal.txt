@@ -3,7 +3,7 @@
 # Install with: pip install -r requirements-minimal.txt
 
 # Core NLP (stable versions with 3.14 wheels)
-nltk==3.8.1
+nltk==3.9.2
 textblob==0.17.1
 
 # Networking
